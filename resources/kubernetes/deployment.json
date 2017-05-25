@@ -1,0 +1,67 @@
+{
+    "apiVersion": "extensions/v1beta1",
+    "kind": "Deployment",
+    "metadata": {
+        "labels": {
+            "project": "$name",
+            "stage": "$stage",
+            "version": "$version"
+        },
+        "name": "$name"
+    },
+    "spec": {
+        "replicas": 1,
+        "selector": {
+            "matchLabels": {
+                "project": "$name"
+            }
+        },
+        "strategy": {
+            "rollingUpdate": {
+                "maxSurge": 1,
+                "maxUnavailable": 1
+            },
+            "type": "RollingUpdate"
+        },
+        "template": {
+            "metadata": {
+                "labels": {
+                    "project": "$name",
+                    "stage": "$stage",
+                    "version": "$version"
+                }
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "image": "$image",
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "$name",
+                        "ports": [
+                            {
+                                "containerPort": 80,
+                                "name": "http",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {
+                            "limits": {
+                                "cpu": "50m",
+                                "memory": "500Mi"
+                            },
+                            "requests": {
+                                "cpu": "50m",
+                                "memory": "500Mi"
+                            }
+                        },
+                        "terminationMessagePath": "/dev/termination-log"
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "restartPolicy": "Always",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 2
+            }
+        }
+    }
+}
